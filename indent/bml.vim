@@ -31,7 +31,7 @@ endif
 
 setlocal autoindent
 setlocal indentexpr=GetBMLIndent()
-setlocal indentkeys=!^F,o,O,0<bar>,0=then,0=else,0=in,0=end
+setlocal indentkeys=!^F,o,O,0<bar>,0=then,0=else,0=in,0=end,0}
 
 setlocal expandtab
 setlocal tabstop<
@@ -62,7 +62,15 @@ function! GetBMLIndent()
     return indent(plnum) - &l:shiftwidth
   endif
 
-  if getline(plnum) =~# '\v<struct|sig|function|with>\s*$' || getline(plnum) =~# '=\s*$'
+  if getline(v:lnum) =~# '}'
+    if getline(plnum) =~# '{\s*$'
+      return indent(plnum)
+    endif
+
+    return indent(plnum) - &l:shiftwidth
+  endif
+
+  if getline(plnum) =~# '\v<struct|sig|function|with>\s*$' || getline(plnum) =~# '\(=\|{\)\s*$'
     return indent(plnum) + &l:shiftwidth
   endif
 
